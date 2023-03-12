@@ -1,0 +1,20 @@
+package com.study.core.web;
+
+import com.study.core.common.MyLogger;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Provider;
+
+@Service
+@RequiredArgsConstructor
+public class LogDemoService {
+
+    private final ObjectProvider<MyLogger> myLoggerObjectProvider;
+
+    public void logic(String id) {
+        MyLogger myLogger = myLoggerObjectProvider.getObject();
+        myLogger.log("service id = " + id);
+    }
+}
