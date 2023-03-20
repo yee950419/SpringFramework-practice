@@ -10,13 +10,13 @@ public class MemberRepository {
     private static Map<Long, Member> store = new HashMap<>();
     private static long sequence = 0L;
 
-    private static MemberRepository instance = new MemberRepository();
+    private static final MemberRepository instance = new MemberRepository();
 
     public static MemberRepository getInstance() {
         return instance;
     }
 
-    public MemberRepository() {
+    private MemberRepository() {
     }
 
     public Member save(Member member) {
