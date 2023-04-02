@@ -11,3 +11,4 @@ import java.lang.annotation.*;
 @Qualifier("subDiscountPolicy")
 public @interface SubDiscountPolicy {
 }
+
