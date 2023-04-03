@@ -27,9 +27,10 @@ public class ItemRepository {
         return new ArrayList<>(store.values());
     }
 
+
     public Item update(long id, Item updateParam) {
         Item item = findById(id);
-        item.setItemName(updateParam.getItemName());
+        item.setName(updateParam.getName());
         item.setPrice(updateParam.getPrice());
         item.setQuantity(updateParam.getQuantity());
 
