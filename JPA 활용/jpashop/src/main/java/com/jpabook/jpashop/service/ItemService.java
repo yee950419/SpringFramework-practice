@@ -17,7 +17,6 @@ public class ItemService {
 
     public void saveItem(Item item) {
         itemRepository.save(item);
-        return item.getId();
     }
 
     public List<Item> findItems() {
