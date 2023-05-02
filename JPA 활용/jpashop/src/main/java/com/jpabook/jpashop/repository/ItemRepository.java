@@ -1,6 +1,8 @@
 package com.jpabook.jpashop.repository;
 
 import com.jpabook.jpashop.domain.item.Item;
+import com.jpabook.jpashop.dto.BookDto;
+import com.jpabook.jpashop.exception.DuplicateIdException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +20,7 @@ public class ItemRepository {
             em.persist(item);
         }
         else {
-            em.merge(item);
+            throw new DuplicateIdException("중복된 회원 오류");
         }
     }
 

@@ -1,6 +1,8 @@
 package com.jpabook.jpashop.service;
 
+import com.jpabook.jpashop.domain.item.Book;
 import com.jpabook.jpashop.domain.item.Item;
+import com.jpabook.jpashop.dto.BookDto;
 import com.jpabook.jpashop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,8 +18,19 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public void saveItem(Item item) {
+    public void saveItem(BookDto bookDto) {
+        Book item = new Book();
+        item.createBook(bookDto.getName(), bookDto.getPrice(),
+                bookDto.getStockQuantity(), bookDto.getAuthor(), bookDto.getIsbn());
+
         itemRepository.save(item);
+    }
+
+    @Transactional
+    public void updateItem(BookDto bookDto) {
+        Book item = (Book) itemRepository.findOne(bookDto.getId());
+        item.createBook(bookDto.getName(), bookDto.getPrice(),
+                bookDto.getStockQuantity(), bookDto.getAuthor(), bookDto.getIsbn());
     }
 
     public List<Item> findItems() {
