@@ -42,7 +42,7 @@ class OrderServiceTest {
 
         //then
         assertThat(orderedId).isEqualTo(findOrder.getId()); //주문한 order가 잘 save 되었는지 확인
-        assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.ORDER); //주문 상태가 ORDER가 맞는지 확인
+        assertThat(findOrder.getStatus()).isEqualTo(OrderStatus.ORDER); //주문 상태가 ORDER가 맞는지 확인
         assertThat(findOrder.getOrderItems().size()).isEqualTo(1); //주문 상품 수량이 맞는지 확인
         assertThat(findOrder.getTotalPrice()).isEqualTo(book.getPrice() * orderCount); //주문 총 금액이 맞는지 확인
         assertThat(book.getStockQuantity()).isEqualTo(initBookCount - orderCount); //주문한만큼 재고량이 줄었는지 확인
@@ -65,7 +65,7 @@ class OrderServiceTest {
         Order cancledOrder = orderRepository.findOne(orderedId);
 
         assertThat(book.getStockQuantity()).isEqualTo(initBookCount); //취소로 인한 재고량 복구 확인
-        assertThat(cancledOrder.getOrderStatus()).isEqualTo(OrderStatus.CANCLE); //주문 상태 취소 확인
+        assertThat(cancledOrder.getStatus()).isEqualTo(OrderStatus.CANCLE); //주문 상태 취소 확인
     }
 
     @Test
