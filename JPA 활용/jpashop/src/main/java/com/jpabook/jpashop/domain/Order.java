@@ -19,7 +19,7 @@ public class Order {
 
     @Id @GeneratedValue
     @Column(name = "order_id")
-    private Long Id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
