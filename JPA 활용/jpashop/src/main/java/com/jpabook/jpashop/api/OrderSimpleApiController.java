@@ -42,14 +42,20 @@ public class OrderSimpleApiController {
 
     @GetMapping("/api/v2/simple-orders")
     public OrderResult orderV2() {
-
         List<Order> orders = orderRepository.findAllByCriteria(new OrderSearch());
         List<SimpleOrderDto> collect = orders.stream().map(o -> new SimpleOrderDto(o)).collect(Collectors.toList());
         return new OrderResult(collect);
     }
 
+    @GetMapping("/api/v3/simple-orders")
+    public OrderResult orderV3() {
+        List<Order> orders = orderRepository.findAllWithMemberAndDelivery();
+        List<SimpleOrderDto> collect = orders.stream().map(o -> new SimpleOrderDto(o)).collect(Collectors.toList());
+        return new OrderResult(collect);
+    }
+
     @Data
-    static class SimpleOrderDto{
+    static class SimpleOrderDto {
         private Long orderId;
         private String name;
         private LocalDateTime orderDate;
