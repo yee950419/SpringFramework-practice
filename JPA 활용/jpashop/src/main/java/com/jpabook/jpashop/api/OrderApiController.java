@@ -82,6 +82,12 @@ public class OrderApiController {
         return new OrderResult(orderQueryDtos);
     }
 
+    @GetMapping("/api/v5/orders")
+    public OrderResult orderV5() {
+        List<OrderQueryDto> orderQueryDtos = orderQueryRepository.findAllByDto_optimization();
+        return new OrderResult(orderQueryDtos);
+    }
+
     @Data
     @AllArgsConstructor
     static class OrderResult<T> {
