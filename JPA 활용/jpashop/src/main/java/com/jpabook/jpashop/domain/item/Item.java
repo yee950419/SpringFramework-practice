@@ -3,11 +3,13 @@ package com.jpabook.jpashop.domain.item;
 import com.jpabook.jpashop.exception.NotEnoughStockException;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+//@BatchSize(size = 100) //OrderItem과 Item의 관계가 N:1이므로 Entity 단에 Batch 사이즈 설정
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype")

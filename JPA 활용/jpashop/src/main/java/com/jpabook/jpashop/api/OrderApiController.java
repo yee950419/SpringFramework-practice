@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,9 @@ public class OrderApiController {
 
     private final OrderRepository orderRepository;
 
-    //엔티티 노출로 인해 api 스팩 바뀜, N+1 문제 발생
+    /**
+     * 엔티티 노출로 인해 api 스팩 바뀜, N+1 문제 발생
+     */
     @GetMapping("/api/v1/orders")
     public List<Order> ordersV1() {
         List<Order> all = orderRepository.findAllByCriteria(new OrderSearch());
@@ -32,14 +35,13 @@ public class OrderApiController {
             List<OrderItem> orderItems = order.getOrderItems();
 
             orderItems.stream().forEach(o -> o.getItem().getName());
-//            for (OrderItem orderItem : orderItems) {
-//                orderItem.getItem().getName();
-//            }
         }
         return all;
     }
 
-    //N+1 문제 발생
+    /**
+     * N+1 문제 발생
+     */
     @GetMapping("/api/v2/orders")
     public OrderResult ordersV2() {
         List<Order> orders = orderRepository.findAllByCriteria(new OrderSearch());
@@ -47,11 +49,26 @@ public class OrderApiController {
         return new OrderResult(collect);
     }
 
-    //fetch join으로 N+1 문제 해결, distinct로 중복 컬럼 제거
-    //페이징 불가능, 패치 조인 2개 이상 사용 불가능 -> 데이터 부정합 위험
+    /**
+     * fetch join으로 N+1 문제 해결, distinct로 중복 컬럼 제거
+     * 페이징 불가능, 패치 조인 2개 이상 사용 불가능 -> 데이터 부정합 위험
+     */
     @GetMapping("/api/v3/orders")
     public OrderResult ordersV3() {
         List<Order> orders = orderRepository.findAllWithItem();
+        List<OrderDto> collect = orders.stream().map(OrderDto::new).collect(Collectors.toList());
+        return new OrderResult(collect);
+    }
+
+    /**
+     * N:1 관계는 DB row 갯수를 증가시키지 않으므로 fetch join하고,
+     * 나머지 1:N 관계들은 default_batch_fetch_size 설정으로 미리 가져오는 방식 (paging 시 가장 많이 사용하는 방식)
+     * 개별 size를 설정하고 싶을 때는 엔티티에 @BatchSize로 size 설정
+     */
+    @GetMapping("/api/v3.1/orders")
+    public OrderResult ordersV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
+                                     @RequestParam(value = "limit", defaultValue = "100") int limit) {
+        List<Order> orders = orderRepository.findAllWithMemberAndDelivery(offset, limit);
         List<OrderDto> collect = orders.stream().map(OrderDto::new).collect(Collectors.toList());
         return new OrderResult(collect);
     }
