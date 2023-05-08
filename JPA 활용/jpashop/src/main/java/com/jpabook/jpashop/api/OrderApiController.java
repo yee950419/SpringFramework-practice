@@ -6,6 +6,8 @@ import com.jpabook.jpashop.domain.OrderItem;
 import com.jpabook.jpashop.domain.OrderStatus;
 import com.jpabook.jpashop.repository.OrderRepository;
 import com.jpabook.jpashop.repository.OrderSearch;
+import com.jpabook.jpashop.repository.order.query.OrderFlatDto;
+import com.jpabook.jpashop.repository.order.query.OrderItemQueryDto;
 import com.jpabook.jpashop.repository.order.query.OrderQueryDto;
 import com.jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,7 +52,7 @@ public class OrderApiController {
     @GetMapping("/api/v2/orders")
     public OrderResult ordersV2() {
         List<Order> orders = orderRepository.findAllByCriteria(new OrderSearch());
-        List<OrderDto> collect = orders.stream().map(o -> new OrderDto(o)).collect(Collectors.toList());
+        List<OrderDto> collect = orders.stream().map(o -> new OrderDto(o)).collect(toList());
         return new OrderResult(collect);
     }
 
@@ -59,7 +63,7 @@ public class OrderApiController {
     @GetMapping("/api/v3/orders")
     public OrderResult ordersV3() {
         List<Order> orders = orderRepository.findAllWithItem();
-        List<OrderDto> collect = orders.stream().map(OrderDto::new).collect(Collectors.toList());
+        List<OrderDto> collect = orders.stream().map(OrderDto::new).collect(toList());
         return new OrderResult(collect);
     }
 
@@ -72,20 +76,49 @@ public class OrderApiController {
     public OrderResult ordersV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
                                      @RequestParam(value = "limit", defaultValue = "100") int limit) {
         List<Order> orders = orderRepository.findAllWithMemberAndDelivery(offset, limit);
-        List<OrderDto> collect = orders.stream().map(OrderDto::new).collect(Collectors.toList());
+        List<OrderDto> collect = orders.stream().map(OrderDto::new).collect(toList());
         return new OrderResult(collect);
     }
 
+    /**
+     * JPA에서 DTO로 직접 조회, N+1 문제 발생
+     */
     @GetMapping("/api/v4/orders")
     public OrderResult orderV4() {
         List<OrderQueryDto> orderQueryDtos = orderQueryRepository.findOrderQueryDtos();
         return new OrderResult(orderQueryDtos);
     }
 
+    /**
+     * JPA에서 DTO로 직접 조회, N+1 문제 해결
+     */
     @GetMapping("/api/v5/orders")
     public OrderResult orderV5() {
         List<OrderQueryDto> orderQueryDtos = orderQueryRepository.findAllByDto_optimization();
         return new OrderResult(orderQueryDtos);
+    }
+
+    /**
+     * 1개의 쿼리로 모두 조회
+     * 페이징 불가, 작업이 힘듦, 조인으로 인해 DB에서 에플리케이션에 전달하는 데이터에 중복 데이터가 추가되므로
+     * 상황에 따라 V5보다 성능이 안 좋을 수 있음
+     */
+    @GetMapping("/api/v6/orders")
+    public OrderResult orderV6() {
+        List<OrderFlatDto> orderFlatDtos = orderQueryRepository.findAllByDto_flat();
+
+        List<OrderQueryDto> collect = orderFlatDtos.stream()
+                .collect(groupingBy(o -> new OrderQueryDto(o.getOrderId(),
+                                o.getName(), o.getOrderDate(), o.getOrderStatus(), o.getAddress()),
+                        mapping(o -> new OrderItemQueryDto(o.getOrderId(),
+                                o.getItemName(), o.getOrderPrice(), o.getCount()), toList())
+                )).entrySet().stream()
+                .map(e -> new OrderQueryDto(e.getKey().getOrderId(),
+                        e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(),
+                        e.getKey().getAddress(), e.getValue()))
+                .collect(toList());
+
+        return new OrderResult(collect);
     }
 
     @Data
@@ -111,7 +144,7 @@ public class OrderApiController {
             orderDate = order.getOrderDate();
             orderStatus = order.getStatus();
             address = order.getDelivery().getAddress();
-            orderItems = order.getOrderItems().stream().map(o -> new OrderItemDto(o)).collect(Collectors.toList());
+            orderItems = order.getOrderItems().stream().map(o -> new OrderItemDto(o)).collect(toList());
         }
     }
 
