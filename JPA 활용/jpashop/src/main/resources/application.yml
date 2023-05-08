@@ -13,6 +13,11 @@ spring:
 #        show_sql: true
         format_sql: true
         default_batch_fetch_size: 500 #Global batch size, 보통 100 ~ 1000 사이로 설정하는 것을 권장(1000개 이상일 시 오류가 나는 DB가 있으므로)
+#    open-in-view: false
+#open-in-view(OSIV)를 default 값인 true로 설정 시, 지연로딩을 controller단에서도 할 수 있음
+#반대로 false로 설정하면 모든 지연 로딩을 transactional 안에서 처리해야 한다. (CQRS 패턴 적용 권장)
+#따라서 고객 서비스와 같이 트래픽이 많은 실시간 API는 OSIV를 끄고, ADMIN 처럼 DB 커넥션을 많이 사용하지 않는 곳에서는 키는 것을 권장
+
 
 logging:
   level:
