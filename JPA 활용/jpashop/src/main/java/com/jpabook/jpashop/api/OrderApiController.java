@@ -6,6 +6,8 @@ import com.jpabook.jpashop.domain.OrderItem;
 import com.jpabook.jpashop.domain.OrderStatus;
 import com.jpabook.jpashop.repository.OrderRepository;
 import com.jpabook.jpashop.repository.OrderSearch;
+import com.jpabook.jpashop.repository.order.query.OrderQueryDto;
+import com.jpabook.jpashop.repository.order.query.OrderQueryRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 public class OrderApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
     /**
      * 엔티티 노출로 인해 api 스팩 바뀜, N+1 문제 발생
@@ -71,6 +74,12 @@ public class OrderApiController {
         List<Order> orders = orderRepository.findAllWithMemberAndDelivery(offset, limit);
         List<OrderDto> collect = orders.stream().map(OrderDto::new).collect(Collectors.toList());
         return new OrderResult(collect);
+    }
+
+    @GetMapping("/api/v4/orders")
+    public OrderResult orderV4() {
+        List<OrderQueryDto> orderQueryDtos = orderQueryRepository.findOrderQueryDtos();
+        return new OrderResult(orderQueryDtos);
     }
 
     @Data
