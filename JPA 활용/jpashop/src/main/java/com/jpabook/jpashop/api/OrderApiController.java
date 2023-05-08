@@ -22,6 +22,7 @@ public class OrderApiController {
 
     private final OrderRepository orderRepository;
 
+    //엔티티 노출로 인해 api 스팩 바뀜, N+1 문제 발생
     @GetMapping("/api/v1/orders")
     public List<Order> ordersV1() {
         List<Order> all = orderRepository.findAllByCriteria(new OrderSearch());
@@ -38,10 +39,20 @@ public class OrderApiController {
         return all;
     }
 
+    //N+1 문제 발생
     @GetMapping("/api/v2/orders")
     public OrderResult ordersV2() {
         List<Order> orders = orderRepository.findAllByCriteria(new OrderSearch());
         List<OrderDto> collect = orders.stream().map(o -> new OrderDto(o)).collect(Collectors.toList());
+        return new OrderResult(collect);
+    }
+
+    //fetch join으로 N+1 문제 해결, distinct로 중복 컬럼 제거
+    //페이징 불가능, 패치 조인 2개 이상 사용 불가능 -> 데이터 부정합 위험
+    @GetMapping("/api/v3/orders")
+    public OrderResult ordersV3() {
+        List<Order> orders = orderRepository.findAllWithItem();
+        List<OrderDto> collect = orders.stream().map(OrderDto::new).collect(Collectors.toList());
         return new OrderResult(collect);
     }
 
