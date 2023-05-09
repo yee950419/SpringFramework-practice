@@ -33,7 +33,7 @@ public class OrderSimpleApiController {
 
     @GetMapping("/api/v1/simple-orders")
     public List<Order> ordersV1() {
-        List<Order> all = orderRepository.findAllByCriteria(new OrderSearch());
+        List<Order> all = orderRepository.findAll(new OrderSearch());
 
         //Lazy 강제 초기화
         for (Order order : all) {
@@ -45,7 +45,7 @@ public class OrderSimpleApiController {
 
     @GetMapping("/api/v2/simple-orders")
     public OrderResult orderV2() {
-        List<Order> orders = orderRepository.findAllByCriteria(new OrderSearch());
+        List<Order> orders = orderRepository.findAll(new OrderSearch());
         List<SimpleOrderDto> collect = orders.stream().map(o -> new SimpleOrderDto(o)).collect(Collectors.toList());
         return new OrderResult(collect);
     }
