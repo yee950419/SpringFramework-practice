@@ -14,8 +14,8 @@ public class Item {
     private int price;
     private int stockQuantity;
 
-//    @OneToMany(mappedBy = "item")
-//    private List<OrderItem> orderItems = new ArrayList<>();
+    @OneToMany(mappedBy = "item")
+    private List<ItemCategory> itemCategory = new ArrayList<>();
 
     public Long getId() {
         return id;
