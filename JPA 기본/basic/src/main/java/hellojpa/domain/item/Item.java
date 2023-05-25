@@ -1,5 +1,6 @@
 package hellojpa.domain.item;
 
+import hellojpa.domain.BaseEntity;
 import hellojpa.domain.ItemCategory;
 
 import javax.persistence.*;
@@ -8,8 +9,8 @@ import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-//@DiscriminatorColumn
-public abstract class Item {
+@DiscriminatorColumn    //Discriminate Column 생성(default name = "DTYPE")
+public abstract class Item extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "ITEM_ID")
