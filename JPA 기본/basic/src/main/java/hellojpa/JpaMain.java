@@ -21,15 +21,12 @@ public class JpaMain {
         tx.begin();
 
         try{
-            Item album = new Album();
-            album.setName("item");
-            em.persist(album);
+            Member member = new Member();
+            member.setName("sanghak");
+            member.setCreatedDate(LocalDateTime.now());
+            em.persist(member);
 
-            Item book = new Book();
-            book.setName("dkdk");
-            em.persist(book);
-//            System.out.println(album.getName());
-
+            System.out.println(member);
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
