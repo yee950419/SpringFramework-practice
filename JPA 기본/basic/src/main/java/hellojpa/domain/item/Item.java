@@ -1,21 +1,26 @@
-package hellojpa.domain;
+package hellojpa.domain.item;
+
+import hellojpa.domain.ItemCategory;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Item {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+//@DiscriminatorColumn
+public abstract class Item {
 
     @Id @GeneratedValue
     @Column(name = "ITEM_ID")
     private Long id;
+
     private String name;
     private int price;
     private int stockQuantity;
 
     @OneToMany(mappedBy = "item")
-    private List<ItemCategory> itemCategory = new ArrayList<>();
+    List<ItemCategory> itemCategories = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -47,5 +52,13 @@ public class Item {
 
     public void setStockQuantity(int stockQuantity) {
         this.stockQuantity = stockQuantity;
+    }
+
+    public List<ItemCategory> getItemCategories() {
+        return itemCategories;
+    }
+
+    public void setItemCategories(List<ItemCategory> itemCategories) {
+        this.itemCategories = itemCategories;
     }
 }

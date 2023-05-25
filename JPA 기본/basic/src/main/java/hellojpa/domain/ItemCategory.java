@@ -1,5 +1,7 @@
 package hellojpa.domain;
 
+import hellojpa.domain.item.Item;
+
 import javax.persistence.*;
 
 @Entity

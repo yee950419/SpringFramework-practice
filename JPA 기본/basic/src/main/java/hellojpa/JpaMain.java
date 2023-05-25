@@ -3,6 +3,9 @@ package hellojpa;
 import hellojpa.domain.Member;
 import hellojpa.domain.Order;
 import hellojpa.domain.OrderStatus;
+import hellojpa.domain.item.Album;
+import hellojpa.domain.item.Book;
+import hellojpa.domain.item.Item;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,24 +21,14 @@ public class JpaMain {
         tx.begin();
 
         try{
-            Member member = new Member();
-            member.setName("sanghak");
-            member.setCity("ddd");
-            member.setStreet("sss");
-            member.setZipCode("123");
-            em.persist(member);
+            Item album = new Album();
+            album.setName("item");
+            em.persist(album);
 
-            Order order = new Order();
-            order.setOrderDate(LocalDateTime.now());
-            order.setStatus(OrderStatus.ORDER);
-            em.persist(order);
-
-            member.createOrder(order);
-
-            List<Order> orders = member.getOrders();
-            for (Order o : orders) {
-                System.out.println("o.getMember().getName() = " + o.getMember().getName());
-            }
+            Item book = new Book();
+            book.setName("dkdk");
+            em.persist(book);
+//            System.out.println(album.getName());
 
             tx.commit();
         } catch (Exception e) {
