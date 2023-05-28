@@ -1,15 +1,8 @@
 package hellojpa;
 
 import hellojpa.domain.Member;
-import hellojpa.domain.Order;
-import hellojpa.domain.OrderStatus;
-import hellojpa.domain.item.Album;
-import hellojpa.domain.item.Book;
-import hellojpa.domain.item.Item;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.List;
 
 public class JpaMain {
 
@@ -21,12 +14,22 @@ public class JpaMain {
         tx.begin();
 
         try{
-            Member member = new Member();
-            member.setName("sanghak");
-            member.setCreatedDate(LocalDateTime.now());
-            em.persist(member);
+            Member m1 = new Member();
+            em.persist(m1);
 
-            System.out.println(member);
+            Member m2 = new Member();
+            em.persist(m2);
+
+            em.flush();
+            em.clear();
+
+            Member reference = em.getReference(Member.class, m1.getId());
+            System.out.println("reference = " + reference.getClass());
+            reference.getName();
+
+            em.getReference(Member.class, m1.getId());
+            System.out.println("m2 reference = " + reference.getClass());
+
             tx.commit();
         } catch (Exception e) {
             tx.rollback();

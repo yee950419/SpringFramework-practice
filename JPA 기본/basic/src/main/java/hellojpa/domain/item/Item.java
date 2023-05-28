@@ -20,7 +20,7 @@ public abstract class Item extends BaseEntity {
     private int price;
     private int stockQuantity;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
     List<ItemCategory> itemCategories = new ArrayList<>();
 
     public Long getId() {
