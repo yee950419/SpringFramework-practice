@@ -14,21 +14,13 @@ public class JpaMain {
         tx.begin();
 
         try{
-            Member m1 = new Member();
-            em.persist(m1);
+            Integer a = new Integer(10);
+            Integer b = a;
 
-            Member m2 = new Member();
-            em.persist(m2);
+            b = 20;
 
-            em.flush();
-            em.clear();
-
-            Member reference = em.getReference(Member.class, m1.getId());
-            System.out.println("reference = " + reference.getClass());
-            reference.getName();
-
-            em.getReference(Member.class, m1.getId());
-            System.out.println("m2 reference = " + reference.getClass());
+            System.out.println("a = " + a);
+            System.out.println("b = " + b);
 
             tx.commit();
         } catch (Exception e) {
